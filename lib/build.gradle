@@ -1,0 +1,58 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+task androidSourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+    include '**/*.java'
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+gradle.projectsEvaluated {
+    def buildTypes = android.buildTypes.collect { type -> type.name }
+    android.buildTypes.each {
+        it.resValue 'string', "CODE_PUSH_APK_BUILD_TIME", Long.toString(System.currentTimeMillis())
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.version = '1.0.4'
+            pom.artifactId = 'SampleApp-ern-container'
+            pom.groupId = 'com.walmartlabs.ern'
+            
+        }
+    }
+}
+
+android {
+    lintOptions {
+        abortOnError false
+        ignoreWarnings true
+    }
+    compileSdkVersion 24
+    buildToolsVersion "26.0.1"
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.0'
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.walmartlabs.ern:react-native:0.49.3'
+}
