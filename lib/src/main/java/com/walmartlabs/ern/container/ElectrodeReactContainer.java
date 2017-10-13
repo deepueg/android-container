@@ -146,7 +146,7 @@ public class ElectrodeReactContainer {
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
             @NonNull final Config reactContainerConfig,
-            @Nullable RequestHandlerConfig requestHandlerConfig) {
+            @Nullable RequestHandlerConfig<MoviesApiImplProvider.MoviesApiRequestHandlerConfig> requestHandlerConfig) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
