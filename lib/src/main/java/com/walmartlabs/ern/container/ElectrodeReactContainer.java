@@ -19,10 +19,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.ern.api.impl.MoviesApiImplProvider;
+import com.ern.api.impl.MovieApiController;
 import com.ern.api.impl.RequestHandlerConfig;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactInstanceManagerBuilder;
@@ -140,13 +139,6 @@ public class ElectrodeReactContainer {
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
             @NonNull final Config reactContainerConfig) {
-        return initialize(application, reactContainerConfig, null);
-    }
-
-    public synchronized static ElectrodeReactContainer initialize(
-            @NonNull Application application,
-            @NonNull final Config reactContainerConfig,
-            @Nullable RequestHandlerConfig<MoviesApiImplProvider.MoviesApiRequestHandlerConfig> requestHandlerConfig) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
@@ -158,16 +150,17 @@ public class ElectrodeReactContainer {
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
-
-        initApiRequestHanlders(requestHandlerConfig);
-
+        initRequestHandlers();
         return sInstance;
     }
 
-    private static void initApiRequestHanlders(@Nullable RequestHandlerConfig config) {
-        new MoviesApiImplProvider(config).init();
+    public void setMovieApiRequestHandlerConfig(@NonNull RequestHandlerConfig requestHandlerConfig) {
+        MovieApiController.register(requestHandlerConfig);
     }
 
+    private static void initRequestHandlers() {
+        MovieApiController.register(null);
+    }
 
     public boolean isReactNativeDeveloperSupport() {
         return this.isReactNativeDeveloperSupport;
