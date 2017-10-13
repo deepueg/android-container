@@ -154,12 +154,35 @@ public class ElectrodeReactContainer {
         return sInstance;
     }
 
+    public synchronized static ElectrodeReactContainer initialize(
+            @NonNull Application application,
+            @NonNull final Config reactContainerConfig,
+            @NonNull final RequestHandlerConfigStore requestHandlerConfigStore) {
+        if (null == sInstance) {
+            sInstance = new ElectrodeReactContainer(
+                    application,
+                    reactContainerConfig
+            );
+
+            // Load bundle now (engine might offer lazy loading later down the road)
+            getReactInstanceManager().createReactContextInBackground();
+
+            Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
+        }
+        initRequestHandlers();
+        return sInstance;
+    }
+
     public void setMovieApiRequestHandlerConfig(@NonNull RequestHandlerConfig requestHandlerConfig) {
         MovieApiController.register(requestHandlerConfig);
     }
 
     private static void initRequestHandlers() {
         MovieApiController.register(null);
+    }
+
+    private static void initRequestHandlers(@NonNull final RequestHandlerConfigStore requestHandlerConfigStore) {
+        MovieApiController.register(requestHandlerConfigStore.getMovieApiConfig());
     }
 
     public boolean isReactNativeDeveloperSupport() {
