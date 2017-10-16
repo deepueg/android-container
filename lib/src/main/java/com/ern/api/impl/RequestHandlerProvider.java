@@ -8,14 +8,14 @@ import android.support.annotation.Nullable;
  * Link: TODO: provide the electrode native link to ern regen-api-impl here.
  */
 
-abstract class ApiImplProvider<T extends RequestHandlerConfig> {
+abstract class RequestHandlerProvider<T extends RequestHandlerConfig> {
 
     protected T requestHandlerConfig;
 
     /**
      * @param requestHandlerConfig: Optional config object that can be passed to an api impl provider.
      */
-    public ApiImplProvider(@Nullable T requestHandlerConfig) {
+    public RequestHandlerProvider(@Nullable T requestHandlerConfig) {
         this.requestHandlerConfig = requestHandlerConfig;
     }
 }
