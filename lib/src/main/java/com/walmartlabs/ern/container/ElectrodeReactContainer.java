@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ern.api.impl.MovieApiController;
+import com.ern.api.impl.MovieApiRequestHandlerProvider;
 import com.ern.api.impl.RequestHandlerConfig;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactInstanceManagerBuilder;
@@ -138,26 +139,8 @@ public class ElectrodeReactContainer {
 
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
-            @NonNull final Config reactContainerConfig) {
-        if (null == sInstance) {
-            sInstance = new ElectrodeReactContainer(
-                    application,
-                    reactContainerConfig
-            );
-
-            // Load bundle now (engine might offer lazy loading later down the road)
-            getReactInstanceManager().createReactContextInBackground();
-
-            Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
-        }
-        initRequestHandlers();
-        return sInstance;
-    }
-
-    public synchronized static ElectrodeReactContainer initialize(
-            @NonNull Application application,
             @NonNull final Config reactContainerConfig,
-            @NonNull final RequestHandlerConfigStore requestHandlerConfigStore) {
+            @NonNull final MovieApiRequestHandlerProvider.MovieApiConfig movieApiConfig) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
@@ -167,22 +150,12 @@ public class ElectrodeReactContainer {
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
+            //Initialize all request handlers
+            MovieApiController.register(movieApiConfig);
+
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
-        initRequestHandlers();
         return sInstance;
-    }
-
-    public void setMovieApiRequestHandlerConfig(@NonNull RequestHandlerConfig requestHandlerConfig) {
-        MovieApiController.register(requestHandlerConfig);
-    }
-
-    private static void initRequestHandlers() {
-        MovieApiController.register(null);
-    }
-
-    private static void initRequestHandlers(@NonNull final RequestHandlerConfigStore requestHandlerConfigStore) {
-        MovieApiController.register(requestHandlerConfigStore.getMovieApiConfig());
     }
 
     public boolean isReactNativeDeveloperSupport() {

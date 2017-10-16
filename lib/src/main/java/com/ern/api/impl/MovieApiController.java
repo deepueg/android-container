@@ -1,6 +1,7 @@
 package com.ern.api.impl;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * GENERATED CODE: DO NOT MODIFY
@@ -14,13 +15,13 @@ public final class MovieApiController {
         //private constructor
     }
 
-    public static void register(@Nullable RequestHandlerConfig requestHandlerConfig) {
+    public static void register(@Nullable MovieApiRequestHandlerProvider.MovieApiConfig requestHandlerConfig) {
         if (sRequestHandler == null) {
             sRequestHandler = new MovieApiRequestHandlerProvider(requestHandlerConfig);
             sRequestHandler.registerGetTopRatedMoviesRequestHandler();
             sRequestHandler.registerGetMovieDetailRequestHandler();
-        } else if (requestHandlerConfig != null) {
-            sRequestHandler.setRequestHandlerConfig(requestHandlerConfig);
+        } else {
+            Log.w("MovieApiController", "A request handler is already registered, ignoring duplicate register call");
         }
     }
 }
