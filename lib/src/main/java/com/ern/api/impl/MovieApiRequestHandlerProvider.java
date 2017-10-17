@@ -1,17 +1,31 @@
+/*
+ * Copyright 2017 WalmartLabs
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.ern.api.impl;
 
 import android.support.annotation.Nullable;
 
 /**
- * This class is simply a generated place holder for your implementations.!  This is just one way of providing implementations for the request handlers.
- * Feel free to modify this class as needed or even discard this and create your own implementation. This is added only to give a reference of how an api request handler implementation can be written.
+ * This class is a generated place holder for your implementations.!
+ * Feel free to modify this class contents as needed. `ern regen-api-impl` command WILL NOT modify the content of this class.
+ * Don't modify the class name as this naming convention is used for container generation.
  */
 public class MovieApiRequestHandlerProvider extends RequestHandlerProvider<MovieApiRequestHandlerProvider.MovieApiConfig> implements MovieApiRequestHandler {
 
     /**
      * @param requestHandlerConfig : Optional config object that can be passed to an api impl provider.
      */
-    public MovieApiRequestHandlerProvider(@Nullable MovieApiRequestHandlerProvider.MovieApiConfig requestHandlerConfig) {
+    MovieApiRequestHandlerProvider(@Nullable MovieApiRequestHandlerProvider.MovieApiConfig requestHandlerConfig) {
         super(requestHandlerConfig);
     }
 
@@ -25,6 +39,7 @@ public class MovieApiRequestHandlerProvider extends RequestHandlerProvider<Movie
         //TODO
     }
 
+    // DO NOT rename this class as this naming convention is followed when a container is generated.
     public static class MovieApiConfig implements RequestHandlerConfig {
 
     }
