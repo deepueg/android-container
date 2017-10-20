@@ -41,6 +41,12 @@ import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import com.ern.api.impl.MoviesApiController;
 import com.ern.api.impl.MoviesApiRequestHandlerProvider;
+import com.ern.api.impl.PetApiController;
+import com.ern.api.impl.PetApiRequestHandlerProvider;
+import com.ern.api.impl.StoreApiController;
+import com.ern.api.impl.StoreApiRequestHandlerProvider;
+import com.ern.api.impl.UserApiController;
+import com.ern.api.impl.UserApiRequestHandlerProvider;
 
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
@@ -142,7 +148,7 @@ public class ElectrodeReactContainer {
             @NonNull Application application,
             @NonNull final Config reactContainerConfig
         ,@NonNull final MoviesApiRequestHandlerProvider.MoviesApiConfig moviesApiConfig
-     ) {
+                    ) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
@@ -154,6 +160,12 @@ public class ElectrodeReactContainer {
 
             //Initialize all request handlers
             MoviesApiController.register(moviesApiConfig);
+            //Initialize all request handlers
+            PetApiController.register(nullApiConfig);
+            //Initialize all request handlers
+            StoreApiController.register(nullApiConfig);
+            //Initialize all request handlers
+            UserApiController.register(nullApiConfig);
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
