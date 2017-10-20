@@ -39,6 +39,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
+import com.ern.api.impl.MoviesApiController;
+import com.ern.api.impl.MoviesApiRequestHandlerProvider;
 
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
@@ -139,7 +141,8 @@ public class ElectrodeReactContainer {
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
             @NonNull final Config reactContainerConfig
-) {
+        ,@NonNull final MoviesApiRequestHandlerProvider.MoviesApiConfig moviesApiConfig
+     ) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
@@ -149,6 +152,8 @@ public class ElectrodeReactContainer {
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
+            //Initialize all request handlers
+            MoviesApiController.register(moviesApiConfig);
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
