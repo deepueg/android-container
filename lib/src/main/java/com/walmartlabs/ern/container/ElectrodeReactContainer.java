@@ -17,29 +17,28 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.ern.api.impl.MovieApiController;
-import com.ern.api.impl.MovieApiRequestHandlerProvider;
-import com.ern.api.impl.RequestHandlerConfig;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
+
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.SafeActivityStarter;
+import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.SafeActivityStarter;
 import com.facebook.react.common.LifecycleState;
-import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.OkHttpClient;
 
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
@@ -56,13 +55,13 @@ public class ElectrodeReactContainer {
 
     private ElectrodeReactContainer(Application application,
                                     Config reactContainerConfig
-    ) {
+                             ) {
         // ReactNative general config
         this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
 
         // Replace OkHttpClient with client provided instance, if any
         if (reactContainerConfig.okHttpClient != null) {
-            OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
+          OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
         }
 
         // Ask for overlay permission for the application if
@@ -71,9 +70,9 @@ public class ElectrodeReactContainer {
         if (reactContainerConfig.isReactNativeDeveloperSupport &&
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 !Settings.canDrawOverlays(application)) {
-            Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            application.startActivity(serviceIntent);
+          Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+          serviceIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          application.startActivity(serviceIntent);
         }
 
         reactInstanceManagerBuilder = ReactInstanceManager.builder()
@@ -89,24 +88,24 @@ public class ElectrodeReactContainer {
 
     public synchronized static ReactInstanceManager getReactInstanceManager() {
         if (null == sReactInstanceManager) {
-            sReactInstanceManager = reactInstanceManagerBuilder.build();
-            sReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
-                @Override
-                public void onReactContextInitialized(ReactContext context) {
-                    sIsReactNativeReady = true;
-                    notifyReactNativeReadyListeners();
-                    for (ReactPackage instance : sReactPackages) {
-                        try {
-                            Method onReactNativeInitialized =
-                                    instance.getClass().getMethod("onReactNativeInitialized");
-                            onReactNativeInitialized.invoke(instance);
-                        } catch (NoSuchMethodException e) {
-                        } catch (IllegalAccessException e) {
-                        } catch (InvocationTargetException e) {
-                        }
-                    }
+          sReactInstanceManager = reactInstanceManagerBuilder.build();
+          sReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
+            @Override
+            public void onReactContextInitialized(ReactContext context) {
+              sIsReactNativeReady = true;
+              notifyReactNativeReadyListeners();
+              for (ReactPackage instance : sReactPackages) {
+                try {
+                  Method onReactNativeInitialized =
+                    instance.getClass().getMethod("onReactNativeInitialized");
+                  onReactNativeInitialized.invoke(instance);
                 }
-            });
+                catch (NoSuchMethodException e) {}
+                catch (IllegalAccessException e) {}
+                catch (InvocationTargetException e) {}
+              }
+            }
+          });
         }
 
         return sReactInstanceManager;
@@ -117,7 +116,7 @@ public class ElectrodeReactContainer {
     }
 
     public static void startActivitySafely(Intent intent) {
-        if (null != sReactInstanceManager) {
+       if (null != sReactInstanceManager) {
             new SafeActivityStarter(sReactInstanceManager.getCurrentReactContext(), intent).startActivity();
         }
     }
@@ -139,31 +138,31 @@ public class ElectrodeReactContainer {
 
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
-            @NonNull final Config reactContainerConfig,
-            @NonNull final MovieApiRequestHandlerProvider.MovieApiConfig movieApiConfig) {
+            @NonNull final Config reactContainerConfig
+) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
                     reactContainerConfig
-            );
+             );
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
-            //Initialize all request handlers
-            MovieApiController.register(movieApiConfig);
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
+
         return sInstance;
     }
+
 
     public boolean isReactNativeDeveloperSupport() {
         return this.isReactNativeDeveloperSupport;
     }
 
     public static boolean isReactNativeReady() {
-        return sIsReactNativeReady;
+            return sIsReactNativeReady;
     }
 
     public static class Config {
@@ -211,7 +210,7 @@ public class ElectrodeReactContainer {
     }
 
     public interface ReactNativeReadyListener {
-        void onReactNativeReady();
+            void onReactNativeReady();
     }
 
 }
