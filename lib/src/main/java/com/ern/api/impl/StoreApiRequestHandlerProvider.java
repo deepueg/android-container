@@ -30,11 +30,6 @@ public class StoreApiRequestHandlerProvider extends RequestHandlerProvider<Store
     }
 
     @Override
-    public void registerGetInventoryRequestHandler() {
-        //TODO
-    }
-
-    @Override
     public void registerPlaceOrderRequestHandler() {
         //TODO
     }

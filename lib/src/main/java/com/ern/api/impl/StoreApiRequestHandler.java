@@ -24,8 +24,6 @@ package com.ern.api.impl;
 
 interface StoreApiRequestHandler {
 
-    void registerGetInventoryRequestHandler();
-
     void registerPlaceOrderRequestHandler();
 
     void registerGetOrderByIdRequestHandler();

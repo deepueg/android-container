@@ -32,7 +32,6 @@ public final class StoreApiController {
     public static void register(@Nullable StoreApiRequestHandlerProvider.StoreApiConfig requestHandlerConfig) {
         if (sRequestHandler == null) {
             sRequestHandler = new StoreApiRequestHandlerProvider(requestHandlerConfig);
-            sRequestHandler.registerGetInventoryRequestHandler();
             sRequestHandler.registerPlaceOrderRequestHandler();
             sRequestHandler.registerGetOrderByIdRequestHandler();
             sRequestHandler.registerDeleteOrderRequestHandler();
