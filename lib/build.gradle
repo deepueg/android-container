@@ -21,10 +21,10 @@ gradle.projectsEvaluated {
 uploadArchives {
     repositories {
         mavenDeployer {
-            pom.version = '1.0.20'
+            pom.version = '1.0.26'
             pom.artifactId = 'SampleApp-ern-container'
             pom.groupId = 'com.walmartlabs.ern'
-            repository(url: "file:~/.m2/repository")
+            
         }
     }
 }
