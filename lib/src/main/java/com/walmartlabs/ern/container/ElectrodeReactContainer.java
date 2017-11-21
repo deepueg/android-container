@@ -39,8 +39,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
-import com.ern.api.impl.MoviesApiController;
-import com.ern.api.impl.MoviesApiRequestHandlerProvider;
 import com.ern.api.impl.PetApiController;
 import com.ern.api.impl.StoreApiController;
 import com.ern.api.impl.UserApiController;
@@ -144,8 +142,7 @@ public class ElectrodeReactContainer {
     public synchronized static ElectrodeReactContainer initialize(
             @NonNull Application application,
             @NonNull final Config reactContainerConfig
-        ,@NonNull final MoviesApiRequestHandlerProvider.MoviesApiConfig moviesApiConfig
-                    ) {
+               ) {
         if (null == sInstance) {
             sInstance = new ElectrodeReactContainer(
                     application,
@@ -155,7 +152,6 @@ public class ElectrodeReactContainer {
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
-            MoviesApiController.register(moviesApiConfig);
             PetApiController.register(null);
             StoreApiController.register(null);
             UserApiController.register(null);
