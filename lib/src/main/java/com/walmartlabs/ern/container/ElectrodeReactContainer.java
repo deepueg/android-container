@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.lang.reflect.Method;
@@ -38,6 +39,7 @@ import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
+import com.ern.api.impl.MoviesApiController;
 import com.ern.api.impl.PetApiController;
 import com.ern.api.impl.StoreApiController;
 import com.ern.api.impl.UserApiController;
@@ -165,6 +167,7 @@ public class ElectrodeReactContainer {
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
+            MoviesApiController.register(null);
             PetApiController.register(null);
             StoreApiController.register(null);
             UserApiController.register(null);
