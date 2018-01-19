@@ -1,15 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
-
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
-    from android.sourceSets.main.java.srcDirs
-    include '**/*.java'
-}
-
-artifacts {
-    archives androidSourcesJar
-}
 
 gradle.projectsEvaluated {
     def buildTypes = android.buildTypes.collect { type -> type.name }
@@ -18,27 +7,16 @@ gradle.projectsEvaluated {
     }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.version = '1.0.36'
-            pom.artifactId = 'SampleApp-ern-container'
-            pom.groupId = 'com.walmartlabs.ern'
-            repository(url: "file:///Users/d0g00g4/.m2/repository")
-        }
-    }
-}
-
 android {
     lintOptions {
         abortOnError false
         ignoreWarnings true
     }
-    compileSdkVersion 24
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -53,6 +31,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.walmartlabs.ern:react-native:0.49.3'
 }
