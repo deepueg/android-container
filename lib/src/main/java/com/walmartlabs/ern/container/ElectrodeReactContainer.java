@@ -36,6 +36,7 @@ import com.facebook.react.ReactInstanceManagerBuilder;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
+import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import com.ern.api.impl.PetApiController;
 import com.ern.api.impl.StoreApiController;
@@ -53,6 +54,7 @@ public class ElectrodeReactContainer {
 
     private ElectrodeReactContainer(Application application
             , Config reactContainerConfig
+            , CodePushPlugin.Config codePushPluginConfig
     ) {
         // ReactNative general config
         this.isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
@@ -82,6 +84,7 @@ public class ElectrodeReactContainer {
                 .setInitialLifecycleState(LifecycleState.BEFORE_CREATE);
 
         final List<ReactPackage> reactPackages = new ArrayList<>();
+        reactPackages.add(new CodePushPlugin().hook(application, reactInstanceManagerBuilder, codePushPluginConfig));
         reactPackages.add(new BridgePlugin().hook(application, reactInstanceManagerBuilder));
 
         mReactInstanceManager = reactInstanceManagerBuilder.build();
@@ -110,6 +113,7 @@ public class ElectrodeReactContainer {
         });
     }
 
+    @SuppressWarnings("WeakerAccess")
     public synchronized static ReactInstanceManager getReactInstanceManager() {
         throwNotInitializedStateException();
         return sInstance.mReactInstanceManager;
@@ -123,15 +127,18 @@ public class ElectrodeReactContainer {
     @SuppressWarnings("unused")
     public static void startActivitySafely(Intent intent) {
         throwNotInitializedStateException();
-        if (null != sInstance.mReactInstanceManager) {
+        if (null != sInstance.mReactInstanceManager && null != sInstance.mReactInstanceManager.getCurrentReactContext()) {
             new SafeActivityStarter(sInstance.mReactInstanceManager.getCurrentReactContext(), intent).startActivity();
+        } else {
+            Log.w(TAG, "startActivitySafely: Unable to start activity, react context or instance manager is null");
         }
     }
 
     @SuppressWarnings("unused")
+    @Nullable
     public static Activity getCurrentActivity() {
         throwNotInitializedStateException();
-        if (null != sInstance.mReactInstanceManager) {
+        if (null != sInstance.mReactInstanceManager && null != sInstance.mReactInstanceManager.getCurrentReactContext()) {
             return sInstance.mReactInstanceManager.getCurrentReactContext().getCurrentActivity();
         }
         return null;
@@ -148,10 +155,12 @@ public class ElectrodeReactContainer {
 
     @SuppressWarnings("UnusedReturnValue")
     public synchronized static ElectrodeReactContainer initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
+            , @NonNull final CodePushPlugin.Config codePushPluginConfig
      ) {
         if (null == sInstance) {
              sInstance = new ElectrodeReactContainer(application, reactContainerConfig
-                    );
+                    ,codePushPluginConfig
+                                        );
 
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
