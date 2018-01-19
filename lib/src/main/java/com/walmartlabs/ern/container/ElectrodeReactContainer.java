@@ -17,11 +17,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +37,9 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
+import com.ern.api.impl.PetApiController;
+import com.ern.api.impl.StoreApiController;
+import com.ern.api.impl.UserApiController;
 
 public class ElectrodeReactContainer {
     private static String TAG = ElectrodeReactContainer.class.getSimpleName();
@@ -90,14 +91,20 @@ public class ElectrodeReactContainer {
             sIsReactNativeReady = true;
             notifyReactNativeReadyListeners();
             for (ReactPackage instance : reactPackages) {
-            try {
-                Method onReactNativeInitialized =
-                instance.getClass().getMethod("onReactNativeInitialized");
-                onReactNativeInitialized.invoke(instance);
-            }
-            catch (NoSuchMethodException e) {}
-            catch (IllegalAccessException e) {}
-            catch (InvocationTargetException e) {}
+                try {
+                    Method onReactNativeInitialized =
+                    instance.getClass().getMethod("onReactNativeInitialized");
+                    onReactNativeInitialized.invoke(instance);
+                }
+                catch (NoSuchMethodException e) {
+                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                }
+                catch (IllegalAccessException e) {
+                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                }
+                catch (InvocationTargetException e) {
+                    Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                }
             }
         }
         });
@@ -113,6 +120,7 @@ public class ElectrodeReactContainer {
         return sInstance;
     }
 
+    @SuppressWarnings("unused")
     public static void startActivitySafely(Intent intent) {
         throwNotInitializedStateException();
         if (null != sInstance.mReactInstanceManager) {
@@ -120,6 +128,7 @@ public class ElectrodeReactContainer {
         }
     }
 
+    @SuppressWarnings("unused")
     public static Activity getCurrentActivity() {
         throwNotInitializedStateException();
         if (null != sInstance.mReactInstanceManager) {
@@ -128,6 +137,7 @@ public class ElectrodeReactContainer {
         return null;
     }
 
+    @SuppressWarnings("unused")
     public static ReactContext getCurrentReactContext() {
         throwNotInitializedStateException();
         if (null != sInstance.mReactInstanceManager) {
@@ -136,6 +146,7 @@ public class ElectrodeReactContainer {
         return null;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public synchronized static ElectrodeReactContainer initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
      ) {
         if (null == sInstance) {
@@ -145,6 +156,9 @@ public class ElectrodeReactContainer {
             // Load bundle now (engine might offer lazy loading later down the road)
             getReactInstanceManager().createReactContextInBackground();
 
+            PetApiController.register(null);
+            StoreApiController.register(null);
+            UserApiController.register(null);
 
             Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
         }
