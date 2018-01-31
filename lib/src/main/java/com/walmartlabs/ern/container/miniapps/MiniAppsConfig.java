@@ -22,6 +22,7 @@ package com.walmartlabs.ern.container.miniapps;
 import java.util.HashMap;
 
 public class MiniAppsConfig {
+
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{
         put("MovieListMiniApp", MovieListMiniAppActivity.class);
     }};
