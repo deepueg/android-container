@@ -32,6 +32,9 @@ import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import com.ern.api.impl.MoviesApiController;
+import com.ern.api.impl.PetApiController;
+import com.ern.api.impl.StoreApiController;
+import com.ern.api.impl.UserApiController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -129,6 +132,9 @@ public class ElectrodeReactContainer {
         getReactInstanceManager().createReactContextInBackground();
 
         MoviesApiController.register(null);
+        PetApiController.register(null);
+        StoreApiController.register(null);
+        UserApiController.register(null);
 
         Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
     }
