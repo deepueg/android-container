@@ -47,11 +47,7 @@ public class MiniAppsConfig {
         }
     }
 
-    /**
-     * @deprecated Use {@link MiniAppsConfig.MiniApps} enum instead
-     */
-    @Deprecated
     public static final HashMap<String, Class> MINIAPP_ACTIVITIES = new HashMap<String, Class>() {{
-        put(MiniApps.MovieListMiniApp.getName(), MiniApps.MovieListMiniApp.getClass());
+        put(MiniApps.MovieListMiniApp.getName(), MiniApps.MovieListMiniApp.getActivityClass());
     }};
 }

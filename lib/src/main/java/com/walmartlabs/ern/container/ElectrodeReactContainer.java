@@ -32,13 +32,11 @@ import com.facebook.react.shell.MainReactPackage;
 import com.walmartlabs.ern.container.plugins.CodePushPlugin;
 import com.walmartlabs.ern.container.plugins.BridgePlugin;
 import com.ern.api.impl.MoviesApiController;
-import com.ern.api.impl.PetApiController;
-import com.ern.api.impl.StoreApiController;
-import com.ern.api.impl.UserApiController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -110,33 +108,34 @@ public class ElectrodeReactContainer {
     public synchronized static void initialize(@NonNull Application application, @NonNull final Config reactContainerConfig
             , @NonNull final CodePushPlugin.Config codePushPluginConfig
      ) {
+        if (sElectrodeReactNativeHost == null) {
+            sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
 
-        sElectrodeReactNativeHost = new ElectrodeReactNativeHost(application);
+            // ReactNative general config
 
-        // ReactNative general config
+            isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
 
-        isReactNativeDeveloperSupport = reactContainerConfig.isReactNativeDeveloperSupport;
+            // Replace OkHttpClient with client provided instance, if any
+            if (reactContainerConfig.okHttpClient != null) {
+                OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
+            }
 
-        // Replace OkHttpClient with client provided instance, if any
-        if (reactContainerConfig.okHttpClient != null) {
-            OkHttpClientProvider.replaceOkHttpClient(reactContainerConfig.okHttpClient);
+            askForOverlayPermissionIfDebug(application);
+
+            sReactPackages.add(new MainReactPackage());
+            sReactPackages.add(new CodePushPlugin().hook(application, codePushPluginConfig));
+            sReactPackages.add(new BridgePlugin().hook(application, null));
+            sReactPackages.removeAll(Collections.singleton((ReactPackage)null));
+
+            // Load bundle now (engine might offer lazy loading later down the road)
+            getReactInstanceManager().createReactContextInBackground();
+
+            MoviesApiController.register(null);
+
+            Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
+        } else {
+            Log.i(TAG, "Ignoring duplicate initialize call, electrode container is already initialized or is being initialized");
         }
-
-        askForOverlayPermissionIfDebug(application);
-
-        sReactPackages.add(new MainReactPackage());
-        sReactPackages.add(new CodePushPlugin().hook(application, codePushPluginConfig));
-        sReactPackages.add(new BridgePlugin().hook(application, null));
-
-        // Load bundle now (engine might offer lazy loading later down the road)
-        getReactInstanceManager().createReactContextInBackground();
-
-        MoviesApiController.register(null);
-        PetApiController.register(null);
-        StoreApiController.register(null);
-        UserApiController.register(null);
-
-        Log.d(TAG, "ELECTRODE REACT-NATIVE ENGINE INITIALIZED\n" + reactContainerConfig.toString());
     }
 
     private static void askForOverlayPermissionIfDebug(Application application) {
@@ -262,7 +261,6 @@ public class ElectrodeReactContainer {
 
         @Override
         protected ReactInstanceManager createReactInstanceManager() {
-            Log.i(TAG, "Creating react native instance manager");
             ReactInstanceManager reactInstanceManager = super.createReactInstanceManager();
             reactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                 @Override
@@ -277,14 +275,15 @@ public class ElectrodeReactContainer {
                         } catch (NoSuchMethodException e) {
                             //Expected since not all react packages would have onReactNativeInitialized() method.
                         } catch (IllegalAccessException e) {
-                            Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                            Log.e(TAG, "IllegalAccessException: Container Initialization failed: " + e.getMessage());
+                            e.printStackTrace();
                         } catch (InvocationTargetException e) {
-                            Log.e(TAG, "Container Initialization failed: " + e.getMessage());
+                            Log.e(TAG, "InvocationTargetException: Container Initialization failed: " + e.getMessage());
+                            e.printStackTrace();
                         }
                     }
                 }
             });
-            Log.i(TAG, "Instance manager created");
             return reactInstanceManager;
         }
     }
